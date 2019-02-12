@@ -4,43 +4,39 @@
 # Output: [[nil, 2, 3, 5], [2, 4, 6, 10], [3, 6, 9, 15], [5, 10, 15, 25]]
 
 class GridGenerator
-  attr_reader :primes, :grid
+  attr_reader :primes
 
   def initialize(primes:)
     @primes = primes
-    @grid = Array.new(primes.size+1) { Array.new(primes.size+1) }
   end
 
   def generate
-    fill_header_row
-    fill_multiplications
-    fill_side_column
-    grid
+    arr = []
+    arr << header_row
+
+    primes.length.times do |i|
+      arr << other_row(i)
+    end
+
+    arr
   end
 
   private
 
-  def fill_header_row
-    grid[0].map!.with_index do |cell, col_index|
-      next if col_index == 0
-      primes[col_index-1]
-    end
+  def header_row
+    primes.dup.unshift(nil)
   end
 
-  def fill_side_column
-    primes.each_with_index do |p, i|
-      grid[i+1][0] = p
-    end
-  end
+  def other_row(row_index)
+    arr = []
 
-  def fill_multiplications
-    0.upto(primes.size) do |row_index|
-      next if row_index == 0 # Skip 'header' row
-      
-      grid[row_index].map!.with_index do |row, col_index|
-        next if col_index == 0 # Skip 'header' col
-        grid[0][col_index] * grid[0][row_index]
+    primes.each_with_index do |prime, col_index|
+      if col_index == 0
+        arr << primes[row_index] # Sidebar values
       end
+      arr << (primes[col_index] * primes[row_index])
     end
-  end    
+
+    arr
+  end
 end
