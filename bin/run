@@ -1,0 +1,20 @@
+#!/usr/bin/env ruby
+
+require './lib/grid_formatter'
+require './lib/grid_generator'
+require './lib/prime_generator'
+
+if ARGV.first
+  limit = ARGV.first.tr('^0-9', '').to_i 
+end
+
+primes = if limit && limit != 0
+  puts "Using passed limit of #{limit}."
+  PrimeGenerator.new(limit: limit).generate
+else
+  puts "Using default limit."
+  PrimeGenerator.new.generate
+end
+
+grid = GridGenerator.new(primes: primes).generate
+GridFormatter.new(grid: grid).format
